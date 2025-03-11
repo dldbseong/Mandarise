@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>만다라트</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, auto);
+            gap: 10px;
+        }
+        .region {
+            display: grid;
+            grid-template-columns: repeat(3, 80px);
+            grid-template-rows: repeat(3, 80px);
+            gap: 5px;
+        }
+        .cell {
+            width: 80px;
+            height: 80px;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 20px;
+            font-size: 14px;
+            text-align: center;
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+        .cell:hover {
+            transform: scale(1.1);
+        }
+        .input-box {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            font-size: 14px;
+            text-align: center;
+            border: none;
+            outline: none;
+            background: transparent;
+            color: black;
+        }
+        .cell:hover .input-box {
+            color: black;
+        }
+        .shake {
+            animation: shake 0.3s ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid">
+        <script>
+            const grid = document.querySelector('.grid');
+            const syncMap = {};
+            const colorSyncMap = {};
+
+            for (let i = 0; i < 9; i++) {
+                const region = document.createElement('div');
+                region.classList.add('region');
+                grid.appendChild(region);
+
+                for (let j = 0; j < 9; j++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    const input = document.createElement('input');
+                    input.classList.add('input-box');
+                    input.type = 'text';
+                    input.maxLength = 20;
+
+                    let regionIndex = i + 1;
+                    let cellIndex = j + 1;
+                    let syncKey = `${regionIndex}-${cellIndex}`;
+
+                    if (regionIndex !== 5 && cellIndex === 5) {
+                        let targetKey = `5-${regionIndex}`;
+                        syncMap[syncKey] = targetKey;
+                        syncMap[targetKey] = syncKey;
+                        colorSyncMap[syncKey] = targetKey;
+                        colorSyncMap[targetKey] = syncKey;
+                    }
+
+                    input.addEventListener('input', (e) => {
+                        let value = e.target.value;
+                        if (syncMap[syncKey]) {
+                            let target = document.querySelector(`[data-key='${syncMap[syncKey]}']`);
+                            if (target) target.value = value;
+                        }
+                    });
+
+                    input.addEventListener('keydown', (e) => {
+                        if (input.value.length >= 20 && e.key !== 'Backspace') {
+                            e.preventDefault();
+                            cell.classList.add('shake');
+                            setTimeout(() => cell.classList.remove('shake'), 300);
+                        }
+                    });
+                    
+                    cell.addEventListener('mouseenter', () => {
+                        input.style.color = 'black';
+                    });
+                    
+                    cell.addEventListener('mouseleave', () => {
+                        input.style.color = '';
+                    });
+                    
+                    cell.appendChild(input);
+                    region.appendChild(cell);
+                    input.dataset.key = syncKey;
+
+                    if (regionIndex === 5 && cellIndex === 5) {
+                        cell.style.backgroundColor = 'lightcoral';
+                    } else if (regionIndex === 5 || cellIndex === 5) {
+                        cell.style.backgroundColor = 'lightblue';
+                    }
+                }
+            }
+        </script>
+    </div>
+</body>
+</html>
