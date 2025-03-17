@@ -7,7 +7,17 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="grid"></div>
+  <div id="login-container">
+    <input type="text" id="username" placeholder="사용자 이름 입력">
+    <button id="login-button">로그인</button>
+  </div>
+
+  <div id="app-container" style="display: none;">
+    <div class="grid"></div>
+    <button id="save-button">저장</button>
+    <button id="logout-button">로그아웃</button>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>

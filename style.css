@@ -1,76 +1,103 @@
 body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f0f0f0;
-  }
-  
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(3, auto);
-    gap: 10px;
-  }
-  
-  .region {
-    display: grid;
-    grid-template-columns: repeat(3, 80px);
-    grid-template-rows: repeat(3, 80px);
-    gap: 5px;
-    position: relative;
-  }
-  
-  .cell {
-    width: 80px;
-    height: 80px;
-    background-color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 20px;
-    font-size: 14px;
-    text-align: center;
-    overflow: hidden;
-    transition: transform 0.2s;
-    position: relative;
-  }
-  
-  .cell:hover {
-    transform: scale(1.1);
-  }
-  
-  .input-box {
-    position: absolute;
-    width: 70px;
-    height: 70px;
-    font-size: 14px;
-    border: none;
-    outline: none;
-    background: transparent;
-    color: black;
-    overflow: hidden;
-    padding: 5px;
-    /* 중앙 정렬을 위한 flex 속성 적용 */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    white-space: pre-wrap;
-    word-break: break-word;
-    text-align: center;
-  }
-  
-  .cell:hover .input-box {
-    color: black;
-  }
-  
-  .shake {
-    animation: shake 0.3s ease-in-out;
-  }
-  
-  @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    50% { transform: translateX(5px); }
-    75% { transform: translateX(-5px); }
-  }
-  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f0f0f0;
+  flex-direction: column;
+}
+
+#login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#login-container input {
+  margin-bottom: 10px;
+  padding: 5px;
+}
+
+#login-container button {
+  padding: 5px 10px;
+}
+
+#app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 10px;
+}
+
+.region {
+  display: grid;
+  grid-template-columns: repeat(3, 80px);
+  grid-template-rows: repeat(3, 80px);
+  gap: 5px;
+  position: relative;
+}
+
+.cell {
+  width: 80px;
+  height: 80px;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
+  font-size: 14px;
+  text-align: center;
+  overflow: hidden;
+  transition: transform 0.2s;
+  position: relative;
+}
+
+.cell:hover {
+  transform: scale(1.1);
+}
+
+.input-box {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  font-size: 14px;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: black;
+  overflow: hidden;
+  padding: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  white-space: pre-wrap;
+  word-break: break-word;
+  text-align: center;
+}
+
+.cell:hover .input-box {
+  color: black;
+}
+
+#save-button, #logout-button {
+  margin-top: 10px;
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+}
+
+#logout-button {
+  background-color: #dc3545;
+}
