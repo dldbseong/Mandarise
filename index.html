@@ -2,154 +2,355 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>만다라트</title>
-  <style>
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background-color: #ffffff; /* 흰색 배경 */
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(3, auto);
-      gap: 10px;
-    }
-    .region {
-      display: grid;
-      grid-template-columns: repeat(3, 80px);
-      grid-template-rows: repeat(3, 80px);
-      gap: 5px;
-      position: relative;
-    }
-    .cell {
-      width: 80px;
-      height: 80px;
-      background-color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: 20px;
-      font-size: 14px;
-      text-align: center;
-      overflow: hidden;
-      transition: transform 0.2s;
-      position: relative;
-      border: 1px solid black; /* 검은색 테두리 추가 */
-    }
-    .cell:hover {
-      transform: scale(1.1);
-    }
-    .input-box {
-      position: absolute;
-      width: 70px;
-      height: 70px;
-      font-size: 14px;
-      border: none;
-      outline: none;
-      background: transparent;
-      color: black;
-      overflow: hidden;
-      padding: 5px;
-      /* 중앙 정렬을 위한 flex 속성 적용 */
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      white-space: pre-wrap;
-      word-break: break-word;
-      text-align: center;
-    }
-    .cell:hover .input-box {
-      color: black;
-    }
-    .shake {
-      animation: shake 0.3s ease-in-out;
-    }
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-5px); }
-      50% { transform: translateX(5px); }
-      75% { transform: translateX(-5px); }
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mandarise</title>
+  <!-- 전체 페이지 스타일 (헤더, 내비게이션 등) -->
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="grid">
-    <script>
-      const grid = document.querySelector('.grid');
-      const syncMap = {};
-      const colorSyncMap = {};
-
-      for (let i = 0; i < 9; i++) {
-        const region = document.createElement('div');
-        region.classList.add('region');
-        grid.appendChild(region);
-
-        for (let j = 0; j < 9; j++) {
-          const cell = document.createElement('div');
-          cell.classList.add('cell');
-          const inputDiv = document.createElement('div');
-          inputDiv.classList.add('input-box');
-          inputDiv.contentEditable = "true";
-          // 이전 유효 텍스트 저장 (칸 제한 기능을 위해)
-          inputDiv.dataset.prev = '';
-
-          let regionIndex = i + 1;
-          let cellIndex = j + 1;
-          let syncKey = `${regionIndex}-${cellIndex}`;
-
-          // 동기화 매핑: 5번 구역의 대응 칸과 동기화 (5번 칸 제외)
-          if (regionIndex !== 5 && cellIndex === 5) {
-            let targetKey = `5-${regionIndex}`;
-            syncMap[syncKey] = targetKey;
-            syncMap[targetKey] = syncKey;
-            colorSyncMap[syncKey] = targetKey;
-            colorSyncMap[targetKey] = syncKey;
-          }
-
-          inputDiv.addEventListener('input', (e) => {
-            let value = e.target.innerText;
-            // 칸의 내용이 칸의 크기를 초과하는지 검사
-            if (e.target.scrollHeight > e.target.clientHeight) {
-              // 초과하면 이전 값으로 되돌리고 흔들림 효과 적용
-              e.target.innerText = e.target.dataset.prev;
-              cell.classList.add('shake');
-              setTimeout(() => cell.classList.remove('shake'), 300);
-              return;
-            } else {
-              e.target.dataset.prev = value;
-              if (syncMap[syncKey]) {
-                let target = document.querySelector(`[data-key='${syncMap[syncKey]}']`);
-                if (target) {
-                  target.innerText = value;
-                  target.dataset.prev = value;
-                }
-              }
-            }
-          });
-
-          cell.addEventListener('mouseenter', () => {
-            inputDiv.style.color = 'black';
-          });
-          cell.addEventListener('mouseleave', () => {
-            inputDiv.style.color = '';
-          });
-          
-          cell.appendChild(inputDiv);
-          region.appendChild(cell);
-          inputDiv.dataset.key = syncKey;
-
-          // 색상 설정: 5번 구역의 중앙 칸은 3번째 색, 5번 구역의 나머지 칸은 2번째 색 적용
-          if (regionIndex === 5 && cellIndex === 5) {
-            cell.style.backgroundColor = 'lightcoral';
-          } else if (regionIndex === 5 || cellIndex === 5) {
-            cell.style.backgroundColor = 'lightblue';
-          }
+  <!-- Framer 이벤트 스크립트 -->
+  <script async src="https://events.framer.com/script?v=1" data-fid="2a83f1c700248e83aeb8707e1a35d30050f1490d606c4e3771a65d096a1a87a3" data-no-nt></script>
+  
+  <!-- Main 콘텐츠 -->
+  <div id="main"
+       data-framer-hydrate-v2='{"routeId":"ziKbc34Hf","localeId":"default","breakpoints":[{"hash":"1fulirn","mediaQuery":"(min-width: 1200px)"},{"hash":"ieyhqu","mediaQuery":"(min-width: 810px) and (max-width: 1199px)"},{"hash":"1sq62f2","mediaQuery":"(max-width: 809px)"}]}'
+       data-framer-ssr-released-at="2025-03-28T12:13:16.808Z"
+       data-framer-page-optimized-at="2025-04-03T11:36:34.774Z">
+       
+    <style data-framer-html-style="">
+      html body { background: rgb(255, 255, 255); }
+    </style>
+    
+    <div data-framer-root class="framer-eWSRF framer-myWNq framer-x6WbY framer-baBVV framer-Mrx9h framer-1fulirn" style="min-height: 100vh; width: auto;">
+      <!-- 헤더와 내비게이션 -->
+      <div class="framer-1mlguqh-container">
+        <div class="ssr-variant hidden-1sq62f2">
+          <nav class="framer-y2hIi framer-iPtzv framer-18hadxk framer-v-18hadxk"
+               data-framer-name="Desktop"
+               style="background-color: rgb(255, 255, 255); width: 100%; opacity: 1;">
+            <div class="framer-cl980y" data-framer-name="Top" style="opacity: 1;">
+              <div data-framer-component-type="SVG"
+                   data-framer-name="Logo"
+                   class="framer-1q7hhxi"
+                   role="img"
+                   aria-label="Framer Logo"
+                   aria-description="An SVG icon of the Framer Logo"
+                   style="image-rendering: pixelated; flex-shrink: 0; background-size: 100% 100%;
+                          background-image: url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 26 24\'><path d=\'M26 0 L26 8 L18 8 L10 0 Z M10 8 L18 8 L26 16 L18 16 L18 24 L10 16 Z\' fill=\'hsl(0, 0%, 0%)\'></path></svg>'); opacity: 1;">
+              </div>
+            </div>
+            <div class="framer-1j8uh6s" data-framer-name="Links" style="opacity: 1;">
+              <div class="framer-1ogh2mh" data-framer-component-type="RichTextContainer" style="display: flex; flex-direction: column;">
+                <p class="framer-text"
+                   style="--font-selector: R0Y7SmFyby1yZWd1bGFy; --framer-font-family: 'Jaro', 'Jaro Placeholder', sans-serif;
+                          --framer-font-size: 15px; --framer-letter-spacing: -0.01em; --framer-line-height: 2em;
+                          --framer-text-alignment: center;">
+                  <a class="framer-text framer-styles-preset-sf1u7h" data-styles-preset="EgEygJmYx"
+                     href="https://github.com/dldbseong/Mandarise" target="_blank" rel="noopener">
+                    소스코드
+                  </a>
+                </p>
+              </div>
+            </div>
+            <div class="framer-1v9n6q0" data-framer-name="Bottom Line" style="background-color: rgba(0,0,0,0.08); opacity: 1;"></div>
+          </nav>
+        </div>
+      </div>
+      
+      <!-- Header 콘텐츠: 제목, iframe 및 부제목 -->
+      <header class="framer-kp20eb" data-framer-name="Header">
+        <div class="framer-1qj35h4" data-framer-appear-id="1qj35h4" data-framer-component-type="RichTextContainer" style="display: flex; flex-direction: column;">
+          <h1 class="framer-text framer-styles-preset-nm80lz" data-styles-preset="iaBy7WzBo">Mandarise</h1>
+        </div>
+        <div class="framer-1sogyvi">
+          <div class="framer-us1krs-container">
+            <!-- 만다라트 그리드 페이지를 포함하는 iframe -->
+            <iframe src="mandarate.html" frameborder="0" style="width: 100%; height: 100%; border: black;"></iframe>
+          </div>
+        </div>
+        <!-- 추가 Header 콘텐츠 (저장하기 버튼, 설명 등)는 2차 코드에 포함됨 -->
+      </header>
+      
+      <!-- 2차 코드: Header (저장하기, 부제목), FAQ, Pivot 등 -->
+      <!-- (아래 코드는 styles.css에서 추가 스타일 적용 가능) -->
+      <!-- Header 추가 영역 -->
+      <div class="framer-1azlk1b" data-framer-appear-id="1azlk1b"
+           style="opacity: 1; will-change: transform; transform: perspective(1200px);">
+        <!-- 저장하기 버튼 -->
+        <div class="framer-5qwxdx" data-framer-name="Button" id="5qwxdx">
+          <div class="framer-bcrbmc" data-framer-component-type="RichTextContainer" style="display: flex; flex-direction: column; justify-content: flex-start;">
+            <p class="framer-text framer-styles-preset-1fgo89p" data-styles-preset="ickuMUi8E">저장하기</p>
+          </div>
+        </div>
+        <!-- 부제목 -->
+        <div class="framer-nhoeru" data-framer-component-type="RichTextContainer" style="display: flex; flex-direction: column; justify-content: flex-start;">
+          <h2 class="framer-text framer-styles-preset-1phvih" data-styles-preset="TEPWpgm45" style="--framer-text-alignment: center;">
+            당신의 목표를 시각화하는 최고의 도구
+          </h2>
+        </div>
+      </div>
+      
+      <!-- FAQ 영역 -->
+      <div class="framer-1uo7d34" data-framer-name="FAQ">
+        <div class="framer-1ypxmgy" data-framer-component-type="RichTextContainer" style="display: flex; flex-direction: column; justify-content: flex-start; opacity: 1; transform: perspective(1200px);">
+          <h2 class="framer-text framer-styles-preset-cfxhij" data-styles-preset="e5W_0VkAu">FAQ</h2>
+        </div>
+        <div class="framer-zbeyha" data-framer-name="Column">
+          <!-- FAQ 항목 1: 만다라트? -->
+          <div class="ssr-variant hidden-1fulirn hidden-1sq62f2">
+            <div class="framer-9vah60-container" style="opacity: 0; transform: perspective(1200px) translateY(100px);">
+              <div class="framer-KdXJb framer-571xf2 framer-v-571xf2" data-framer-name="Default" style="background-color: rgb(247,247,247); width: 100%; border-radius: 20px; opacity: 1;">
+                <div class="framer-1bnovdf-container" style="opacity: 1;">
+                  <div class="framer-sdgVq framer-113yjkz framer-v-113yjkz" data-framer-name="Closed" style="width: 100%; opacity: 1;">
+                    <!-- FAQ 질문 -->
+                    <div class="framer-1ynu70o" data-framer-name="Question" data-highlight="true" tabindex="0" style="opacity: 1;">
+                      <div class="framer-xyrx7l" data-framer-name="Plus" style="opacity: 0.3; transform: none;">
+                        <div class="framer-zg5eil" style="background-color: rgb(0,0,0); border-radius: 10px; opacity: 1;"></div>
+                        <div class="framer-19umj4t" style="background-color: rgb(0,0,0); border-radius: 10px; opacity: 1;"></div>
+                      </div>
+                      <div class="framer-1jrlmc3" data-framer-component-type="RichTextContainer"
+                           style="display: flex; flex-direction: column; justify-content: flex-start; flex-shrink: 0; opacity: 1;"
+                           data-styles-preset="e5W_0VkAu">
+                        <h3 class="framer-text"
+                            style="--font-selector: R0Y7SW50ZXItNjAw; --framer-font-family: 'Inter', 'Inter Placeholder', sans-serif;
+                                   --framer-font-size: 18px; --framer-font-weight: 600; --framer-letter-spacing: -0.5px;
+                                   --framer-line-height: 1.4em; --framer-text-alignment: left; --framer-text-color: rgb(0,17,34);">
+                          만다라트?
+                        </h3>
+                      </div>
+                    </div>
+                    <!-- FAQ 답변 -->
+                    <div class="framer-1egrm04" data-framer-name="Answer" style="opacity: 0;">
+                      <div class="framer-1l1b9zs" data-framer-component-type="RichTextContainer"
+                           style="display: flex; flex-direction: column; justify-content: flex-start; flex-shrink: 0; opacity: 0.6;">
+                        <p class="framer-text"
+                           style="--font-selector: R0Y7TWFucm9wZS02MDA=; --framer-font-family: 'Manrope', 'Manrope Placeholder', sans-serif;
+                                  --framer-font-weight: 600; --framer-line-height: 1.5em; --framer-text-alignment: left;
+                                  --framer-text-color: rgb(102,102,102);">
+                          "만다라트(Mandal-Art)는 목표를 체계적으로 시각화하여 단계별로 달성할 수 있도록 돕는 자기 계발 도구입니다."
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- FAQ 항목 2: 사용법? -->
+          <div class="framer-ph2qed-container" style="opacity: 1;">
+            <div class="framer-sdgVq framer-113yjkz framer-v-113yjkz" data-framer-name="Closed" style="width: 100%; opacity: 1;">
+              <!-- FAQ 질문 -->
+              <div class="framer-1ynu70o" data-framer-name="Question" data-highlight="true" tabindex="0" style="opacity: 1;">
+                <div class="framer-xyrx7l" data-framer-name="Plus" style="opacity: 0.3; transform: none;">
+                  <div class="framer-zg5eil" style="background-color: rgb(0,0,0); border-radius: 10px; opacity: 1;"></div>
+                  <div class="framer-19umj4t" style="background-color: rgb(0,0,0); border-radius: 10px; opacity: 1;"></div>
+                </div>
+                <div class="framer-1jrlmc3" data-framer-component-type="RichTextContainer"
+                     style="display: flex; flex-direction: column; justify-content: flex-start; flex-shrink: 0; opacity: 1;"
+                     data-styles-preset="e5W_0VkAu">
+                  <h3 class="framer-text"
+                      style="--font-selector: R0Y7SW50ZXItNjAw; --framer-font-family: 'Inter', 'Inter Placeholder', sans-serif;
+                             --framer-font-size: 18px; --framer-font-weight: 600; --framer-letter-spacing: -0.5px;
+                             --framer-line-height: 1.4em; --framer-text-alignment: left; --framer-text-color: rgb(0,17,34);">
+                    사용법?
+                  </h3>
+                </div>
+              </div>
+              <!-- FAQ 답변 -->
+              <div class="framer-1egrm04" data-framer-name="Answer" style="opacity: 0;">
+                <div class="framer-1l1b9zs" data-framer-component-type="RichTextContainer"
+                     style="display: flex; flex-direction: column; justify-content: flex-start; flex-shrink: 0; opacity: 0.6;">
+                  <p class="framer-text"
+                     style="--font-selector: R0Y7TWFucm9wZS02MDA=; --framer-font-family: 'Manrope', 'Manrope Placeholder', sans-serif;
+                            --framer-font-weight: 600; --framer-line-height: 1.5em; --framer-text-alignment: left;
+                            --framer-text-color: rgb(102,102,102);">
+                    "중앙에 최종 목표를 입력하고, 주변에 이를 달성하기 위한 8가지 세부 목표를 설정하세요.
+                    각 세부 목표를 더 작은 실행 계획으로 세분화하여 목표를 효과적으로 관리할 수 있습니다!"
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Pivot 영역 (Call-to-Action) -->
+      <div class="framer-1gp0tza" data-framer-name="Pivot">
+        <div class="framer-1er8ds6" data-framer-name="Wrapper">
+          <div class="framer-koj9we" data-framer-component-type="RichTextContainer"
+               style="display: flex; flex-direction: column; justify-content: flex-start; flex-shrink: 0;">
+            <h2 class="framer-text framer-styles-preset-cfxhij" data-styles-preset="e5W_0VkAu" style="--framer-text-alignment: center;">
+              Start now.
+            </h2>
+          </div>
+          <div class="framer-evpiju" data-framer-name="Buttons">
+            <button class="framer-wk4luz" data-framer-name="Button" data-reset="button" id="top">
+              <div class="framer-pr975o" data-framer-component-type="RichTextContainer"
+                   style="display: flex; flex-direction: column; justify-content: flex-start; flex-shrink: 0;">
+                <p class="framer-text"
+                   style="--font-selector: R0Y7SW50ZXItNjAw; --framer-font-family: 'Inter', 'Inter Placeholder', sans-serif;
+                          --framer-font-size: 14px; --framer-font-weight: 600; --framer-text-alignment: center;
+                          --framer-text-color: rgb(255,255,255);">
+                  시작하기
+                </p>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 기타 오버레이 영역 -->
+      <div class="framer-1lhajb4">
+        <div class="framer-1hu3zkn"></div>
+      </div>
+      <div id="overlay"></div>
+      
+      <!-- Framer embed height 스크립트 -->
+      <script type="module">
+        let height = 0;
+        function sendEmbedHeight() {
+          window.parent.postMessage({ embedHeight: height }, "*");
         }
-      }
-    </script>
+        const observer = new ResizeObserver((entries) => {
+          if (entries.length !== 1) return;
+          const entry = entries[0];
+          if (entry.target !== document.body) return;
+          height = entry.contentRect.height;
+          sendEmbedHeight();
+        });
+        observer.observe(document.body);
+        window.addEventListener("message", (event) => {
+          if (event.source !== window.parent) return;
+          if (event.data !== "getEmbedHeight") return;
+          sendEmbedHeight();
+        });
+      </script>
+      
+      <!-- Framer appear 애니메이션 및 관련 스크립트 -->
+      <script>
+        (() => {
+          function u() {
+            function n(t, e, i) {
+              let r = document.createElement("a");
+              r.href = t;
+              r.target = i;
+              r.rel = e;
+              document.body.appendChild(r);
+              r.click();
+              r.remove();
+            }
+            function o(t) {
+              if (this.dataset.hydrated) {
+                this.removeEventListener("click", o);
+                return;
+              }
+              t.preventDefault();
+              t.stopPropagation();
+              let e = this.getAttribute("href");
+              if (!e) return;
+              if (/Mac|iPod|iPhone|iPad/u.test(navigator.userAgent) ? t.metaKey : t.ctrlKey)
+                return n(e, "", "_blank");
+              let r = this.getAttribute("rel") ?? "",
+                  c = this.getAttribute("target") ?? "";
+              n(e, r, c);
+            }
+            function a(t) {
+              if (this.dataset.hydrated) {
+                this.removeEventListener("auxclick", o);
+                return;
+              }
+              t.preventDefault();
+              t.stopPropagation();
+              let e = this.getAttribute("href");
+              e && n(e, "", "_blank");
+            }
+            function s(t) {
+              if (this.dataset.hydrated) {
+                this.removeEventListener("keydown", s);
+                return;
+              }
+              if (t.key !== "Enter") return;
+              t.preventDefault();
+              t.stopPropagation();
+              let e = this.getAttribute("href");
+              if (!e) return;
+              let i = this.getAttribute("rel") ?? "",
+                  r = this.getAttribute("target") ?? "";
+              n(e, i, r);
+            }
+            document.querySelectorAll("[data-nested-link]").forEach(t => {
+              if (t instanceof HTMLElement) {
+                t.addEventListener("click", o);
+                t.addEventListener("auxclick", a);
+                t.addEventListener("keydown", s);
+              }
+            });
+          }
+          return u;
+        })()();
+      </script>
+      <script>
+        (() => {
+          function i() {
+            for (let e of document.querySelectorAll("[data-framer-original-sizes]")) {
+              let t = e.getAttribute("data-framer-original-sizes");
+              t === "" ? e.removeAttribute("sizes") : e.setAttribute("sizes", t);
+              e.removeAttribute("data-framer-original-sizes");
+            }
+          }
+          function a() {
+            window.__framer_onRewriteBreakpoints = i;
+          }
+          return a;
+        })()();
+      </script>
+      <script type="framer/appear" id="__framer__appearAnimationsContent">
+        {"1qj35h4":{"default":{"initial":{"opacity":0.001,"rotate":0,"rotateX":0,"rotateY":0,"scale":1,"skewX":0,"skewY":0,"transformPerspective":1200,"x":0,"y":100},"animate":{"opacity":1,"rotate":0,"rotateX":0,"rotateY":0,"scale":1,"skewX":0,"skewY":0,"transformPerspective":1200,"transition":{"damping":30,"delay":0,"mass":1,"stiffness":100,"type":"spring"},"x":0,"y":0}}},"1azlk1b":{"default":{"initial":{"opacity":0.001,"rotate":0,"rotateX":0,"rotateY":0,"scale":1,"skewX":0,"skewY":0,"transformPerspective":1200,"x":0,"y":100},"animate":{"opacity":1,"rotate":0,"rotateX":0,"rotateY":0,"scale":1,"skewX":0,"skewY":0,"transformPerspective":1200,"transition":{"damping":30,"delay":0.2,"mass":1,"stiffness":100,"type":"spring"},"x":0,"y":0}}}}
+      </script>
+      <script type="framer/appear" id="__framer__breakpoints">
+        [{"hash":"1fulirn","mediaQuery":"(min-width: 1200px)"},{"hash":"ieyhqu","mediaQuery":"(min-width: 810px) and (max-width: 1199px)"},{"hash":"1sq62f2","mediaQuery":"(max-width: 809px)"}]
+      </script>
+      <script data-framer-appear-animation="no-preference">
+        (() => {
+          function s(r, n, t) {
+            window.__framer_disable_appear_effects_optimization__ ||
+            typeof animator > "u" ||
+            requestAnimationFrame(() => {
+              performance.mark("framer-appear-start");
+              animator.animateAppearEffects(
+                JSON.parse(window.__framer__appearAnimationsContent.text),
+                (i, o, p) => {
+                  let e = document.querySelector(i);
+                  if (e) {
+                    for (let [a, m] of Object.entries(o))
+                      animator.startOptimizedAppearAnimation(e, a, m, p[a]);
+                  }
+                },
+                r,
+                n,
+                t && window.matchMedia("(prefers-reduced-motion:reduce)").matches === true,
+                animator.getActiveVariantHash(JSON.parse(window.__framer__breakpoints.text))
+              );
+              performance.mark("framer-appear-end");
+              performance.measure("framer-appear", "framer-appear-start", "framer-appear-end");
+            });
+          }
+          return s;
+        })()("data-framer-appear-id", "__Appear_Animation_Transform__", false);
+      </script>
+      
+      <!-- Module preload 및 번들 스크립트 -->
+      <link rel="modulepreload" fetchpriority="low" href="https://framerusercontent.com/sites/5apDf6hFc7qgkVSqoKgwEc/chunk-JL4U6ZUP.mjs">
+      <link rel="modulepreload" fetchpriority="low" href="https://framerusercontent.com/sites/5apDf6hFc7qgkVSqoKgwEc/chunk-FIZTVOUW.mjs">
+      <link rel="modulepreload" fetchpriority="low" href="https://framerusercontent.com/sites/5apDf6hFc7qgkVSqoKgwEc/chunk-A3IIQ6X3.mjs">
+      <link rel="modulepreload" fetchpriority="low" href="https://framerusercontent.com/sites/5apDf6hFc7qgkVSqoKgwEc/pGtJevj3nCzztkzi92O99G4C56u_wZHscZ096WTzKgw.DLW7DVE5.mjs">
+      <link rel="modulepreload" fetchpriority="low" href="https://framerusercontent.com/sites/5apDf6hFc7qgkVSqoKgwEc/chunk-42U43NKG.mjs">
+      <link rel="modulepreload" fetchpriority="low" href="https://framerusercontent.com/sites/5apDf6hFc7qgkVSqoKgwEc/chunk-ATHEQK73.mjs">
+      <link rel="modulepreload" fetchpriority="low" href="https://framerusercontent.com/sites/5apDf6hFc7qgkVSqoKgwEc/script_main.OAU5MW2W.mjs">
+      <script type="module" async data-framer-bundle="main" fetchpriority="low" src="https://framerusercontent.com/sites/5apDf6hFc7qgkVSqoKgwEc/script_main.OAU5MW2W.mjs"></script>
+      <!-- SVG 템플릿 (숨김 처리) -->
+      <div id="svg-templates" style="position: absolute; overflow: hidden; bottom: 0; left: 0; width: 0; height: 0; z-index: 0; contain: strict" aria-hidden="true"></div>
+    </div>
   </div>
 </body>
 </html>
