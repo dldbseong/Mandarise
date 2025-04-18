@@ -154,6 +154,94 @@
     section.faq {
       margin: 60px 0;
     }
+    .modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal-overlay.hidden { display: none; }
+
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  width: 360px;
+  border-radius: 8px;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.modal-close {
+  position: absolute;
+  top: 8px; right: 8px;
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+.modal-content h2 {
+  margin-bottom: 12px;
+  font-size: 1.2rem;
+  text-align: center;
+}
+.modal-body {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.cell-preview {
+  width: 80px; height: 80px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  overflow: hidden;
+}
+.editor-form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.editor-form label {
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+.editor-form input,
+.editor-form textarea {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 0.9rem;
+}
+.color-palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.color-palette .swatch {
+  width: 24px; height: 24px;
+  border: 1px solid #999;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.color-palette .swatch.selected {
+  outline: 2px solid #333;
+}
+.modal-footer {
+  text-align: right;
+}
+.modal-footer .btn {
+  padding: 6px 14px;
+  font-size: 0.9rem;
+}
+
   </style>
 </head>
 <body>
@@ -162,7 +250,7 @@
   <header>
     <div class="left-menu">
       <!-- 소스코드 (GitHub 링크) -->
-      <a href="https://github.com/사용자이름/레포이름" target="_blank">소스코드</a>
+      <a href="https://github.com/dldbseong/Mandarise.git" target="_blank">소스코드</a>
     </div>
     <div class="right-menu">
       <!-- 로그인/로그아웃 버튼 -->
@@ -179,6 +267,7 @@
     <!-- 만다라트 컨테이너 시작 -->
     <div class="grid" id="mandarat-grid">
       <script>
+        
         const grid = document.querySelector('#mandarat-grid');
         const syncMap = {};
         const colorSyncMap = {};
@@ -295,14 +384,24 @@
         // 전역에 함수 등록
         window.saveMandarat = saveMandarat;
         window.startNow = startNow;
+         // 초기화 함수 추가
+      function resetMandarat() {
+        if (confirm("입력한 내용이 초기화 됩니다. 계속하시겠습니까?")) {
+          document.querySelectorAll('.input-box').forEach(el => el.innerText = '');
+          localStorage.removeItem('mandaratData');
+        }
+      }
+      window.resetMandarat = resetMandarat;
+      
       </script>
+      
     </div>
     <!-- 만다라트 컨테이너 끝 -->
 
     <!-- 버튼 영역 -->
     <div class="btn-area">
       <button class="btn" onclick="saveMandarat()">저장하기</button>
-      
+      <button class="btn" onclick="resetMandarat()">리셋하기</button>
     </div>
 
 <!-- FAQ 섹션 (이전 FAQ 섹션 대체용) -->
@@ -419,7 +518,38 @@
       <h3>Start now.</h3>
       <button class="btn" onclick="startNow()">시작하기</button>
     </div>
-  </main>
+    <!-- Cell Editor Modal -->
+<div id="cell-modal" class="modal-overlay hidden">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeCellModal()">×</button>
+    <h2>칸 속성 편집</h2>
+    <div class="modal-body">
+      <div class="cell-preview"></div>
+      <div class="editor-form">
+        <label>제목</label>
+        <input type="text" id="cell-title" placeholder="칸 제목을 입력하세요">
+        <label>설명</label>
+        <textarea id="cell-desc" rows="3" placeholder="칸 설명을 입력하세요"></textarea>
+        <label>배경색</label>
+        <div id="color-palette" class="color-palette"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="applyCellEdit()">저장</button>
+    </div>
+  </div>
+</div>
 
+  </main>
+<!-- 하단 개발자 정보 섹션 -->
+<footer style="text-align: center; padding: 40px 20px; border-top: 1px solid #ccc; background-color: #fafafa; margin-top: 60px;">
+  <p style="font-size: 1rem; color: #555;">만다라이즈(Mandarise) 개발자: 이윤성</p>
+  <p style="font-size: 0.95rem; margin-top: 8px;">
+    GitHub: <a href="https://github.com/dldbseong/Mandarise.git" target="_blank" style="color: #007acc; text-decoration: none;">https://github.com/dldbseong/Mandarise.git</a>
+  </p>
+  <p style="font-size: 0.95rem; margin-top: 4px;">
+    이메일: <a href="mailto:example@email.com" style="color: #007acc; text-decoration: none;">ooriysi@naver.com</a>
+  </p>
+</footer>
 </body>
 </html>
