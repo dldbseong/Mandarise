@@ -63,3 +63,88 @@ footer a { color:#007acc; text-decoration:none; }
     opacity     0.4s ease-out,
     padding     0.5s ease-out;
 }
+/* 모달 오버레이 */
+.modal-overlay {
+  position: fixed; inset:0;
+  background: rgba(0,0,0,0.5);
+  display: none; justify-content:center; align-items:center;
+  z-index:1000;
+}
+.modal-overlay.open { display: flex; }
+
+/* 모달 박스 */
+.modal-content {
+  background: #fff;
+  border-radius: 8px;
+  width: 90%; max-width: 600px;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.modal-close {
+  position: absolute; top:10px; right:10px;
+  background:none; border:none; font-size:1.2rem; cursor:pointer;
+}
+
+/* 모달 본문: 그리드 프리뷰 + 미리보기 */
+.modal-body {
+  display: flex; gap:20px; margin-bottom:20px;
+}
+.modal-grid-container {
+  flex:1;
+}
+.modal-grid-full {
+  display:grid;
+  grid-template-columns: repeat(9, 1fr);
+  grid-template-rows: repeat(9, 1fr);
+  gap:2px;
+  background:#f0f0f0;
+  padding:5px;
+}
+.modal-grid-full div {
+  width:12px; height:12px;
+  background:#fff; border:1px solid #ddd;
+}
+.modal-grid-full .current { background:#000; }
+.modal-grid-full .related { background:#ccc; }
+.modal-legend {
+  display:flex; gap:10px; margin-top:8px;
+  font-size:0.8rem; color:#666;
+}
+.legend-box {
+  width:10px; height:10px;
+  display:inline-block; margin-right:4px;
+}
+.legend-box.current { background:#000; }
+.legend-box.related { background:#ccc; }
+
+.modal-preview-box {
+  flex:1; border:1px solid #000; height:144px;
+}
+
+/* 색상 팔레트 */
+.color-picker-bar {
+  display:flex; gap:4px; margin-bottom:20px;
+}
+.color-picker-bar div {
+  flex:1; height:24px; cursor:pointer;
+  border:1px solid #ccc;
+}
+.color-picker-bar div:hover {
+  outline:2px solid #333;
+}
+
+/* 폼 */
+.modal-form label {
+  display:block; font-weight:bold; margin:8px 0 4px;
+}
+.modal-form textarea {
+  width:100%; min-height:50px; padding:8px; border:1px solid #ccc; border-radius:4px;
+  resize:none; font-size:0.9rem;
+}
+.checkbox-group {
+  display:flex; align-items:center; gap:8px; margin:12px 0;
+}
+.form-actions {
+  text-align:right; margin-top:20px;
+}

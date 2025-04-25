@@ -52,6 +52,57 @@
     <p>이메일: <a href="mailto:ooriysi@naver.com">ooriysi@naver.com</a></p>
   </footer>
 
+  
+<!-- ==== 칸 에디터 모달 ==== -->
+<div id="cell-editor-overlay" class="modal-overlay">
+  <div class="modal-content">
+    <button class="modal-close">×</button>
+    <div class="modal-body">
+      <!-- 왼쪽: 9×9 전체 중 3×3 미리보기 -->
+      <div class="modal-grid-container">
+        <div class="modal-grid-full">
+          <!-- 여기엔 9×9 전체, CSS/JS로 그리드 그려줌 -->
+        </div>
+        <div class="modal-legend">
+          <span><div class="legend-box current"></div>현재칸</span>
+          <span><div class="legend-box related"></div>연관칸</span>
+        </div>
+      </div>
+      <!-- 오른쪽: 칸 단일 미리보기 -->
+      <div class="modal-preview-box"></div>
+    </div>
+
+    <!-- 배경색 팔레트 -->
+    <div class="color-picker-bar">
+      <!-- 10가지 색상 박스들 -->
+      <div data-color="#ffffff"></div>
+      <div data-color="#EB9694"></div>
+      <div data-color="#FAD0C3"></div>
+      <div data-color="#FEF3BD"></div>
+      <div data-color="#C1E1C5"></div>
+      <div data-color="#BEDADC"></div>
+      <div data-color="#C4DEF6"></div>
+      <div data-color="#BED3F3"></div>
+      <div data-color="#D4C4FB"></div>
+      <div data-color="#E6E6FA"></div>
+    </div>
+
+    <!-- 폼 섹션 -->
+    <div class="modal-form">
+      <label>칸 메인 내용</label>
+      <textarea id="editor-main" placeholder="핵심적인 문장을 적어주세요."></textarea>
+      <label>메인 내용 설명</label>
+      <textarea id="editor-desc" placeholder="해당 칸에 대한 설명을 적어주세요."></textarea>
+      <div class="checkbox-group">
+        <input type="checkbox" id="editor-done"><label for="editor-done">완료 표시</label>
+      </div>
+      <div class="form-actions">
+        <button id="editor-save" class="btn">저장</button>
+        <button id="editor-cancel" class="btn">취소</button>
+      </div>
+    </div>
+  </div>
+</div>
   <script src="script.js"></script>
 </body>
 </html>

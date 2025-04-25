@@ -85,3 +85,75 @@ document.querySelectorAll('.faq-item .faq-question').forEach(q => q.addEventList
 window.saveMandarat = saveMandarat;
 window.resetMandarat = resetMandarat;
 window.startNow = startNow;
+
+
+// 모달 참조
+const overlay    = document.getElementById('cell-editor-overlay');
+const btnClose   = overlay.querySelector('.modal-close');
+const btnCancel  = document.getElementById('editor-cancel');
+const btnSave    = document.getElementById('editor-save');
+const fldMain    = document.getElementById('editor-main');
+const fldDesc    = document.getElementById('editor-desc');
+const fldDone    = document.getElementById('editor-done');
+const colorBoxes = document.querySelectorAll('.color-picker-bar div');
+const gridFull   = document.querySelector('.modal-grid-full');
+const previewBox = document.querySelector('.modal-preview-box');
+
+let currentCell, currentInput;
+
+// 1) 모든 .cell 클릭 이벤트 (한 번 저장해도 계속 유지)
+document.querySelectorAll('.cell').forEach(cell => {
+  cell.addEventListener('click', () => {
+    currentCell  = cell;
+    currentInput = cell.querySelector('.input-box');
+
+    // ▶ 그리드 풀 미리보기 갱신
+    gridFull.innerHTML = '';
+    document.querySelectorAll('.cell').forEach((c, idx) => {
+      const d = document.createElement('div');
+      // 현재 클릭 cell
+      if (c === cell)       d.classList.add('current');
+      // 연관 칸(같은 행 or 열)
+      else if (c.dataset.zone === cell.dataset.zone || c.dataset.cell === cell.dataset.cell)
+                            d.classList.add('related');
+      gridFull.appendChild(d);
+    });
+
+    // ▶ 개별 미리보기 박스
+    previewBox.innerText = currentInput.innerText;
+    previewBox.style.backgroundColor = window.getComputedStyle(cell).backgroundColor;
+
+    // ▶ 폼 필드 채우기
+    fldMain.value = currentInput.dataset.main || '';
+    fldDesc.value = currentInput.dataset.desc || '';
+    fldDone.checked = currentInput.dataset.done === 'true';
+
+    // ▶ 색상 팔레트 초기화
+    colorBoxes.forEach(box => {
+      box.style.background = box.dataset.color;
+      box.onclick = () => {
+        currentCell.style.backgroundColor = box.dataset.color;
+        previewBox.style.backgroundColor = box.dataset.color;
+      };
+    });
+
+    // 모달 열기
+    overlay.classList.add('open');
+  });
+});
+
+// 닫기
+btnClose.onclick  = () => overlay.classList.remove('open');
+btnCancel.onclick = () => overlay.classList.remove('open');
+
+// 저장
+btnSave.onclick = () => {
+  // 데이터 속성에 저장
+  currentInput.dataset.main = fldMain.value;
+  currentInput.dataset.desc = fldDesc.value;
+  currentInput.dataset.done = fldDone.checked;
+  // 화면 미리보기에도 반영
+  currentInput.innerText = fldMain.value;
+  // 닫기
+  overlay.classList.remove('open');
+};
