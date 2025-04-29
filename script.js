@@ -10,6 +10,8 @@ for (let i = 0; i < 9; i++) {
     inputDiv.dataset.prev = '';
     const regionIndex = i+1, cellIndex = j+1, key = `${regionIndex}-${cellIndex}`;
     inputDiv.dataset.key = key;
+    cell.dataset.zone = regionIndex;
+    cell.dataset.cell = cellIndex;
     cell.appendChild(inputDiv);
     region.appendChild(cell);
     // 중앙 동기화
@@ -45,32 +47,63 @@ for (let i = 0; i < 9; i++) {
   }
 }
 
-// 저장 기능
 async function saveMandarat() {
-  const data = {};
-  document.querySelectorAll('.input-box').forEach(el => data[el.dataset.key] = el.innerText);
-  localStorage.setItem('mandaratData', JSON.stringify(data));
+  // 1) 캡처할 DOM 요소 선택
+  const gridEl = document.getElementById('mandarat-grid');
+  // 2) html2canvas로 캔버스 생성
+  const canvas = await html2canvas(gridEl, { backgroundColor: null, scale: 2 });
+  const imgData = canvas.toDataURL('image/png');
+  // 3) jsPDF로 PDF 문서 생성
   const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ unit: 'pt', format: 'a4' });
-  doc.setFontSize(14);
-  let y=40;
-  doc.text('Mandarise 만다라트 저장 내용', 40, y);
-  for (const key in data) {
-    y += 20;
-    if (y > 800) { doc.addPage(); y = 40; }
-    doc.text(`${key}: ${data[key]}`, 40, y);
-  }
-  doc.save('mandarat.pdf');
-  alert('만다라트가 저장되었고 PDF가 다운로드되었습니다!');
+  // A4용지 기준 가로/세로 단위(포인트)
+  const pdf = new jsPDF({
+    orientation: 'portrait',
+    unit: 'pt',
+    format: 'a4'
+  });
+  // 페이지 폭/높이 계산
+  const pageWidth  = pdf.internal.pageSize.getWidth();
+  const pageHeight = pdf.internal.pageSize.getHeight();
+  // 캔버스 크기 비율 계산 (A4 폭에 맞추고 비율 유지)
+  const imgProps = pdf.getImageProperties(imgData);
+  const imgWidth  = pageWidth - 40; // 좌우 여백 20pt씩
+  const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+  // 4) PDF에 이미지 삽입
+  pdf.addImage(imgData, 'PNG', 20, 20, imgWidth, imgHeight);
+  // 5) 다운로드
+  pdf.save('mandarat_capture.pdf');
 }
 
-// 초기화 기능
 function resetMandarat() {
-  if (confirm('입력한 내용이 초기화 됩니다. 계속하시겠습니까?')) {
-    document.querySelectorAll('.input-box').forEach(el => el.innerText = '');
-    localStorage.removeItem('mandaratData');
-  }
+  if (!confirm('입력한 모든 내용과 색상이 초기화 됩니다. 계속하시겠습니까?')) return;
+
+  document.querySelectorAll('.cell').forEach(cell => {
+    const input = cell.querySelector('.input-box');
+    // 1) 텍스트, 설명, 완료 플래그 초기화
+    input.innerText = '';
+    delete input.dataset.main;
+    delete input.dataset.desc;
+    delete input.dataset.done;
+
+    // 2) .done 클래스 제거 (체크표시 초기화)
+    cell.classList.remove('done');
+
+    // 3) 배경색 기본값으로 초기화
+    const zone = parseInt(cell.dataset.zone, 10);
+    const idx  = parseInt(cell.dataset.cell, 10);
+    if (zone === 5 && idx === 5) {
+      cell.style.backgroundColor = 'lightcoral';
+    } else if (zone === 5 || idx === 5) {
+      cell.style.backgroundColor = 'lightblue';
+    } else {
+      cell.style.backgroundColor = 'white';
+    }
+  });
+
+  // 4) 로컬 스토리지 초기화
+  localStorage.removeItem('mandaratData');
 }
+
 
 // 시작하기: 최상단 스크롤
 function startNow() {
@@ -95,6 +128,7 @@ const btnSave    = document.getElementById('editor-save');
 const fldMain    = document.getElementById('editor-main');
 const fldDesc    = document.getElementById('editor-desc');
 const fldDone    = document.getElementById('editor-done');
+const fldColor   = document.getElementById('editor-color');
 const colorBoxes = document.querySelectorAll('.color-picker-bar div');
 const gridFull   = document.querySelector('.modal-grid-full');
 const previewBox = document.querySelector('.modal-preview-box');
@@ -146,14 +180,54 @@ document.querySelectorAll('.cell').forEach(cell => {
 btnClose.onclick  = () => overlay.classList.remove('open');
 btnCancel.onclick = () => overlay.classList.remove('open');
 
-// 저장
+// 셀 데이터를 동기화할 헬퍼 함수
+function syncCellData(zoneIdx, cellIdx, main, desc, done, color) {
+  const selector = `.input-box[data-key="${zoneIdx}-${cellIdx}"]`;
+  const input = document.querySelector(selector);
+  if (!input) return;
+
+  // 1) 데이터 속성
+  input.dataset.main = main;
+  input.dataset.desc = desc;
+  input.dataset.done = done;
+
+  // 2) 화면 표시
+  input.innerText = main;
+  const cellEl = input.parentElement;
+  cellEl.style.backgroundColor = color;
+
+  // 3) 완료 표시 스타일 토글
+  if (done) cellEl.classList.add('done');
+  else      cellEl.classList.remove('done');
+}
+
 btnSave.onclick = () => {
-  // 데이터 속성에 저장
-  currentInput.dataset.main = fldMain.value;
-  currentInput.dataset.desc = fldDesc.value;
-  currentInput.dataset.done = fldDone.checked;
-  // 화면 미리보기에도 반영
-  currentInput.innerText = fldMain.value;
-  // 닫기
+  if (!currentCell) return;
+
+  // 1) 입력값 수집
+  const main  = fldMain.value;
+  const desc  = fldDesc.value;
+  const done  = fldDone.checked;
+  // 모달 미리보기 박스의 실제 배경색을 가져옵니다
+  const color = window.getComputedStyle(previewBox).backgroundColor;
+
+  // 2) 현재 칸 정보
+  const zone0 = parseInt(currentCell.dataset.zone, 10);
+  const cell0 = parseInt(currentCell.dataset.cell, 10);
+
+  // 3) 주체 칸 업데이트
+  syncCellData(zone0, cell0, main, desc, done, color);
+
+  // 4) 동기화 대상 업데이트
+  // 1) 내가 5번 칸(각 구역의 중앙)이라면 -> 5번 구역의 cell0번 칸
+  if (cell0 === 5 && zone0 !== 5) {
+    syncCellData(5, zone0, main, desc, done, color);
+  }
+  // 2) 내가 5번 구역의 칸(cell0번)이라면 -> cell0 구역의 5번 칸
+  else if (zone0 === 5 && cell0 !== 5) {
+    syncCellData(cell0, 5, main, desc, done, color);
+  }
+
+  // 5) 모달 닫기
   overlay.classList.remove('open');
 };

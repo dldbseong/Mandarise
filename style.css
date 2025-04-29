@@ -148,3 +148,28 @@ footer a { color:#007acc; text-decoration:none; }
 .form-actions {
   text-align:right; margin-top:20px;
 }
+
+/* 셀에 완료 표시된 경우 */
+.cell.done {
+  position: relative; /* ::before 절대 위치용 */
+}
+
+/* 배경 전체를 덮는 반투명 초록 오버레이 */
+.cell.done::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(144, 238, 144, 0.4);
+  border-radius: inherit; /* 셀 모양 그대로 */
+}
+
+/* 체크 아이콘 */
+.cell.done::after {
+  content: '✔';
+  color: darkgreen;
+  font-size: 24px;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
