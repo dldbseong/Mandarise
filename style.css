@@ -173,3 +173,62 @@ footer a { color:#007acc; text-decoration:none; }
   transform: translate(-50%, -50%);
   pointer-events: none;
 }
+
+/* 1) 모달 내부 전체 여백 & 요소 간격 조정 */
+.modal-content {
+  padding: 24px;
+  gap: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 2) Squircle 모서리 (border-radius 업) */
+.modal-content,
+.modal-grid-full div,
+.modal-preview-box,
+.color-picker-bar div,
+.modal-form textarea,
+.modal-form label,
+.btn {
+  border-radius: 16px; /* 부드러운 squircle 효과 */
+}
+
+/* 3) 주요 텍스트(레이블, 타이틀) 볼드 & 크기 업 */
+.modal-form label,
+.modal-close,
+.modal-body h2 {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+/* 4) 미리보기 박스: 실제 셀과 동일 크기 (80px) */
+.modal-preview-box {
+  width: 80px;
+  height: 80px;
+  border: 2px solid #000;
+  border-radius: 16px;
+}
+
+/* 모달 그리드 셀(미니뷰)에도 squircle 적용 */
+.modal-grid-full div {
+  border-radius: 4px; 
+}
+
+/* 폼 요소 간 간격 조정 */
+.modal-form .form-group {
+  margin-bottom: 16px;
+}
+.form-actions {
+  margin-top: 24px;
+  gap: 12px;
+}
+.color-picker-bar {
+  margin-bottom: 16px;
+  gap: 8px;
+}
+
+/* 버튼(s)에도 squircle 및 볼드 적용 */
+.btn {
+  font-weight: 600;
+  padding: 10px 20px;
+}
